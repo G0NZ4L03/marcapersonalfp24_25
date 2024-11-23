@@ -1,5 +1,7 @@
 <?php
-
+/*
+2024_11_28_000001__add_ciclo_to_estudiantes_table.php
+*/
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
