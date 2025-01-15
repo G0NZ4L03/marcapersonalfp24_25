@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\CicloController;
+use App\Http\Controllers\API\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Psr\Http\Message\ServerRequestInterface;
@@ -13,6 +14,9 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 
 Route::prefix('v1')->group(function () {
     Route::apiResource('ciclos', CicloController::class);
+});
+Route::prefix('v1')->group(function () {
+    Route::apiResource('users', UsersController::class);
 });
 
 Route::any('/{any}', function (ServerRequestInterface $request) {
