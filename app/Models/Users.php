@@ -10,10 +10,10 @@ class Users extends Model
     use HasFactory;
     protected $fillable = [
         'id',
-        'firstName',
-        'lastName',
+        'name',
+        'nombre',
+        'apellidos',
         'email',
         'password',
-        'linkedIn'
     ];
 }
