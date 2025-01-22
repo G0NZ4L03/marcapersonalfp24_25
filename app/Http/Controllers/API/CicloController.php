@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Helpers\FilterHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CicloResource;
 use App\Models\Ciclo;
@@ -11,15 +12,18 @@ class CicloController extends Controller
 {
 
     public $modelclass = Ciclo::class;
-    
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
+        $query = FilterHelper::applyFilter($request, ['codCiclo','codFamilia','grado','nombre']);
+
+        $query = FilterHelper::applySort($request, $query);
+
         return CicloResource::collection(
-            Ciclo::orderBy($request->_sort ?? 'id', $request->_order ?? 'asc')
-            ->paginate($request->perPage)
+            $query->paginate($request->perPage)
         );
     }
 
