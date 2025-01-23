@@ -37,5 +37,30 @@ class ReactAdminResponse
             }
         } catch (\Throwable $th) { }
         return $response;
+
+}
+public static function applyFilter(Request $request, $query, array $filterColumns)
+{
+    if ($request->filled('q')) {
+        $search = $request->input('q');
+        $query->where(function ($query) use ($filterColumns, $search) {
+            foreach ($filterColumns as $column) {
+                $query->orWhere($column, 'like', '%' . $search . '%');
+            }
+        });
+    } else {
+        foreach ($filterColumns as $column) {
+            if ($request->filled($column)) {
+                $query->where($column, 'like', '%' . $request->input($column) . '%');
+            }
+        }
     }
+}
+
+public static function applySort(Request $request, $query)
+{
+    if ($request->filled('_sort') && $request->filled('_order')) {
+        $query->orderBy($request->_sort, $request->_order);
+    }
+}
 }

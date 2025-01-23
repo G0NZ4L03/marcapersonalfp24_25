@@ -3,20 +3,26 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\ReactAdminResponse;
 use App\Http\Resources\ReconocimientoResource;
 use App\Models\Reconocimiento;
 use Illuminate\Http\Request;
 
 class ReconocimientoController extends Controller
 {
+    public $modelclass = Reconocimiento::class;
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
+        $query = Reconocimiento::query();
+
+        ReactAdminResponse::applyFilter($request, $query,filterColumns: ['nombre', 'docente_validador']);
+        ReactAdminResponse::applySort($request, $query);
+
         return ReconocimientoResource::collection(
-            Reconocimiento::orderBy($request->_sort ?? 'id', $request->_order ?? 'asc')
-            ->paginate($request->perPage)
+            $query->paginate($request->perPage ?? 10)
         );
     }
 

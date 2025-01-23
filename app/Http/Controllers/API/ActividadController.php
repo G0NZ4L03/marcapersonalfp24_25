@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\ReactAdminResponse;
 use App\Http\Resources\ActividadResource;
 use App\Models\Actividad;
 use Illuminate\Http\Request;
@@ -10,14 +11,18 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
 class ActividadController extends Controller
 {
+    public $modelclass = Actividad::class;
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
+        $query = Actividad::query();
+
+        ReactAdminResponse::applyFilter($request,$query, ['nombre', 'descripcion']);
+        ReactAdminResponse::applySort($request, $query);
         return ActividadResource::collection(
-            Actividad::orderBy($request->_sort ?? 'id', $request->_order ?? 'asc')
-            ->paginate($request->perPage)
+            $query->paginate($request->perPage ?? 10)
         );
     }
 

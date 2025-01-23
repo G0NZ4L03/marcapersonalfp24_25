@@ -3,20 +3,27 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\ReactAdminResponse;
 use App\Http\Resources\FamiliaProfesionalResource;
 use App\Models\FamiliaProfesional;
 use Illuminate\Http\Request;
 
 class FamiliaProfesionalController extends Controller
 {
+    public $modelclass = FamiliaProfesional::class;
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
+        $query = FamiliaProfesional::query();
+
+        ReactAdminResponse::applyFilter($request,$query, filterColumns: ['codigo','nombre']);
+        ReactAdminResponse::applySort($request, $query);
+
         return FamiliaProfesionalResource::collection(
-            FamiliaProfesional::orderBy($request->_sort ?? 'id', $request->_order ?? 'asc')
-            ->paginate($request->perPage)
+            $query->paginate($request->perPage ?? 10)
         );
     }
 
