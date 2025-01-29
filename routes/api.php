@@ -32,6 +32,7 @@ Route::prefix('v1')->group(function () {
     ]);
     Route::apiResource('curriculos', CurriculoController::class);
     Route::apiResource('users', UserController::class);
+    Route::get('proyectos/count', [ProyectoController::class, 'count']);
     Route::apiResource('proyectos', ProyectoController::class);
     Route::apiResource('reconocimientos', ReconocimientoController::class);
     Route::apiResource('participantes_proyectos', ParticipanteProyectoController::class);

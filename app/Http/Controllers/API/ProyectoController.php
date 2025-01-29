@@ -15,9 +15,6 @@ class ProyectoController extends Controller
      * Display a listing of the resource.
      */
 
-     public $modelclass = Proyecto::class;
-
-
     public function index(Request $request)
     {
         /** Hay 10 proyectos, con lo que en verdad el paginate podriamos quitarlo
@@ -73,5 +70,11 @@ class ProyectoController extends Controller
                 'message' => 'Error: ' . $e->getMessage()
             ], 400);
         }
+    }
+    public function count()
+    {
+        $proyectoCount = Proyecto::count();
+        return response()->json(['count' => $proyectoCount]);
+
     }
 }
