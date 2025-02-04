@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('ciclos', function (Blueprint $table) {
             $table->id();
             $table->string('codCiclo', 6);
+            $table->foreignId('familia_id')->constrained('familias_profesionales');
             $table->string('nombre');
             $table->string('grado', 30);
             $table->timestamps();
