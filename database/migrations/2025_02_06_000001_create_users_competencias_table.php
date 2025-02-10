@@ -12,9 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users_competencias', function (Blueprint $table) {
-            $table->foreignId('user_id');
-            $table->foreignId('competencia_id');
-            $table->foreignId('docente_validador')->constrained('users', 'id');
+            $table->unsignedBigInteger('user_id')->notnullable();
+            $table->foreign('user_id')->references('id')->on('users');
+
+            $table->unsignedBigInteger('competencia_id')->notnullable();
+            $table->foreign('competencia_id')->references('id')->on('competencias');
+
+            $table->unsignedBigInteger('docente_validador')->nullable();
+            $table->foreign('docente_validador')->references('id')->on(table: 'users')->onDelete('set null');
         });
     }
 

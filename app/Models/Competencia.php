@@ -20,4 +20,9 @@ class Competencia extends Model
 
     public static $filterColumns = ['id', 'nombre', 'color'];
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'users_competencias')
+            ->withPivot('docente_validador');
+    }
 }
