@@ -89,6 +89,10 @@ class User extends Authenticatable
 
     public function isAdministrator(): bool
     {
-        return $this->email === env('ADMIN_EMAIL');
+        return $this->administrador !== null;
+    }
+    public function administrador()
+    {
+        return $this->hasOne(Administrador::class);
     }
 }
