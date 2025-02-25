@@ -3,9 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Curriculo;
+use Illuminate\Routing\Controllers\Middleware;
 
 class CurriculoController extends Controller
 {
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('auth:sanctum', except: ['index', 'show']),
+        ];
+    }
     public function getIndex()
     {
         return view('curriculos.index')
