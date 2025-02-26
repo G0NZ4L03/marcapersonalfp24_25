@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\IdiomaResource;
 use App\Models\Idiomas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class IdiomaController extends Controller
 {
@@ -19,9 +20,8 @@ class IdiomaController extends Controller
 
         return IdiomaResource::collection(
             Idiomas::orderBy($request->_sort ?? 'id', $request->_order ?? 'asc')
-            ->paginate($request->perPage)
+                ->paginate($request->perPage)
         );
-
     }
 
     /**
@@ -29,10 +29,17 @@ class IdiomaController extends Controller
      */
     public function store(Request $request)
     {
+        //Añado las autorizaciones del middleware en el controlador (store, update y destroy)
+        Gate::authorize('create', arguments: Idiomas::class);
         $idioma = json_decode($request->getContent(), true);
-
-        $idioma = Idiomas::create($idioma);
-
+        //Creo una comprobacion para que el usuario que cree, pase a ser el propietario
+        if ($idioma = Idiomas::create($idioma)) {
+            $request->user()->esPropietario();
+        } else {
+            return response()->json([
+                'message' => 'Error al crear la familia profesional'
+            ], 400);
+        }
         return new IdiomaResource($idioma);
     }
 
@@ -42,7 +49,6 @@ class IdiomaController extends Controller
     public function show(Idiomas $idioma)
     {
         return new IdiomaResource($idioma);
-
     }
 
     /**
@@ -50,6 +56,7 @@ class IdiomaController extends Controller
      */
     public function update(Request $request, Idiomas $idioma)
     {
+        Gate::authorize('update', arguments: Idiomas::class);
         $cicloData = json_decode($request->getContent(), true);
         $idioma->update($cicloData);
 
@@ -61,6 +68,7 @@ class IdiomaController extends Controller
      */
     public function destroy(Idiomas $idioma)
     {
+        Gate::authorize('delete', $idioma);
         try {
             $idioma->delete();
             return response()->json(null, 204);

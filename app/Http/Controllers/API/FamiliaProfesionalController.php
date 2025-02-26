@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\FamiliaProfesionalResource;
 use App\Models\FamiliaProfesional;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class FamiliaProfesionalController extends Controller
 {
@@ -27,9 +28,17 @@ class FamiliaProfesionalController extends Controller
      */
     public function store(Request $request)
     {
+        //Añado las autorizaciones del middleware en el controlador (store, update y destroy)
+        Gate::authorize('create', FamiliaProfesional::class);
         $familiaProfesional = json_decode($request->getContent(),true);
-
-        $familiaProfesional = FamiliaProfesional::create($familiaProfesional);
+        //Creo una comprobacion para que el usuario que cree, pase a ser el propietario
+        if ($familiaProfesional = FamiliaProfesional::create($familiaProfesional)) {
+            $request->user()->esPropietario();
+        } else {
+            return response()->json([
+                'message' => 'Error al crear la familia profesional'
+            ], 400);
+        }
 
         return new FamiliaProfesionalResource(($familiaProfesional));
     }
@@ -47,6 +56,8 @@ class FamiliaProfesionalController extends Controller
      */
     public function update(Request $request, FamiliaProfesional $familiaProfesional)
     {
+        Gate::authorize('update', $familiaProfesional);
+
         $familiaProfesionalData = json_decode($request->getContent(), true);
         $familiaProfesional->update($familiaProfesionalData);
 
@@ -58,6 +69,7 @@ class FamiliaProfesionalController extends Controller
      */
     public function destroy(FamiliaProfesional $familiaProfesional)
     {
+        Gate::authorize('delete', $familiaProfesional);
         try {
             $familiaProfesional->delete();
             return response()->json(null, 204);
